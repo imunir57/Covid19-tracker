@@ -3,11 +3,26 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 </head>
 <body>
-<h1>Chart</h1>
   <div id="container" style="width: 50%;">
     <canvas id="chart"></canvas>
   </div>
 <script>
+
+Chart.pluginService.register({
+    beforeDraw: function (chart, easing) {
+        if (chart.config.options.chartArea && chart.config.options.chartArea.backgroundColor) {
+            var helpers = Chart.helpers;
+            var ctx = chart.chart.ctx;
+            var chartArea = chart.chartArea;
+
+            ctx.save();
+            ctx.fillStyle = chart.config.options.chartArea.backgroundColor;
+            ctx.fillRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
+            ctx.restore();
+        }
+    }
+});
+
 var ctx = document.getElementById("chart").getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'line',
@@ -16,10 +31,33 @@ var myChart = new Chart(ctx, {
         datasets: [{
             label: 'New cases',
             data: {{cases|safe}},
-            //backgroundColor: "red",
+            backgroundColor: "#ADD8E6",
+            borderColor: "#4dfff0",
+            fill: false,
+            pointRadius: 3,
+			pointHoverRadius: 8,
         }]
     },
     options: {
+		responsive: true,
+		title: {
+			display: true,
+			text: 'New Cases Chart',
+            fontSize: 15,
+		},
+        legend: {
+            display: false,
+        },
+		tooltips: {
+			mode: 'index',
+			intersect: false,
+            backgroundColor: "#808080",
+		},
+		hover: {
+			mode: 'nearest',
+			intersect: true
+		},
+        chartArea: {backgroundColor: '#808080'}
     }
 });
 </script>
